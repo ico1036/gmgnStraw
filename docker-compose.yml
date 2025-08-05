@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  gmgn-crawler:
+    build: .
+    container_name: gmgn-crawler
+    ports:
+      - "5000:5000"
+    environment:
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./data:/app/data  # 데이터 영속성을 위한 볼륨
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # 자동 모니터링을 위한 별도 서비스 (선택사항)
+  gmgn-monitor:
+    build: .
+    container_name: gmgn-monitor
+    command: python auto_monitor.py
+    environment:
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
+    depends_on:
+      - gmgn-crawler
