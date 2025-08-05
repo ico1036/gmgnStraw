@@ -5,7 +5,7 @@ services:
     build: .
     container_name: gmgn-crawler
     ports:
-      - "5000:5000"
+      - "5002:5000"
     environment:
       - PYTHONUNBUFFERED=1
     volumes:
